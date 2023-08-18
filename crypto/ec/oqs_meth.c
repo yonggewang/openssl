@@ -119,6 +119,19 @@ int oqssl_kem_nids_list[] = {
         NID_hqc128,
         NID_hqc192,
         NID_hqc256,
+        NID_rlcel1,
+        NID_rlcel3,
+        NID_rlcel5,
+        NID_classicmceliece348864,
+        NID_classicmceliece348864f,
+        NID_classicmceliece460896,
+        NID_classicmceliece460896f,
+        NID_classicmceliece6688128,
+        NID_classicmceliece6688128f,
+        NID_classicmceliece6960119,
+        NID_classicmceliece6960119f,
+        NID_classicmceliece8192128,
+        NID_classicmceliece8192128f,
 /////// OQS_TEMPLATE_FRAGMENT_LIST_KNOWN_KEM_NIDS_END
 };
 
@@ -226,6 +239,45 @@ char* get_oqs_alg_name(int openssl_nid)
     case NID_hqc256:
     case NID_p521_hqc256:
       return OQS_KEM_alg_hqc_256;
+    case NID_rlcel1:
+    case NID_p256_rlcel1:
+      return OQS_KEM_alg_RLCE_l1;
+    case NID_rlcel3:
+    case NID_p384_rlcel3:
+      return OQS_KEM_alg_RLCE_l3;
+    case NID_rlcel5:
+    case NID_p521_rlcel5:
+      return OQS_KEM_alg_RLCE_l5;
+    case NID_classicmceliece348864:
+    case NID_p256_classicmceliece348864:
+      return OQS_KEM_alg_classic_mceliece_348864;
+    case NID_classicmceliece348864f:
+    case NID_p256_classicmceliece348864f:
+      return OQS_KEM_alg_classic_mceliece_348864f;
+    case NID_classicmceliece460896:
+    case NID_p384_classicmceliece460896:
+      return OQS_KEM_alg_classic_mceliece_460896;
+    case NID_classicmceliece460896f:
+    case NID_p384_classicmceliece460896f:
+      return OQS_KEM_alg_classic_mceliece_460896f;
+    case NID_classicmceliece6688128:
+    case NID_p521_classicmceliece6688128:
+      return OQS_KEM_alg_classic_mceliece_6688128;
+    case NID_classicmceliece6688128f:
+    case NID_p521_classicmceliece6688128f:
+      return OQS_KEM_alg_classic_mceliece_6688128f;
+    case NID_classicmceliece6960119:
+    case NID_p521_classicmceliece6960119:
+      return OQS_KEM_alg_classic_mceliece_6960119;
+    case NID_classicmceliece6960119f:
+    case NID_p521_classicmceliece6960119f:
+      return OQS_KEM_alg_classic_mceliece_6960119f;
+    case NID_classicmceliece8192128:
+    case NID_p521_classicmceliece8192128:
+      return OQS_KEM_alg_classic_mceliece_8192128;
+    case NID_classicmceliece8192128f:
+    case NID_p521_classicmceliece8192128f:
+      return OQS_KEM_alg_classic_mceliece_8192128f;
 ///// OQS_TEMPLATE_FRAGMENT_ASSIGN_SIG_ALG_END
     default:
       return NULL;

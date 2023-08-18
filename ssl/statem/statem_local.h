@@ -170,6 +170,8 @@ __owur int extension_is_relevant(SSL *s, unsigned int extctx,
                                  unsigned int thisctx);
 __owur int tls_collect_extensions(SSL *s, PACKET *packet, unsigned int context,
                                   RAW_EXTENSION **res, size_t *len, int init);
+__owur int tls_collect_extensions_serverhello_rlce(SSL *s, PACKET *packet, unsigned int context,
+                                  RAW_EXTENSION **res, size_t *len, int init);
 __owur int tls_parse_extension(SSL *s, TLSEXT_INDEX idx, int context,
                                RAW_EXTENSION *exts,  X509 *x, size_t chainidx);
 __owur int tls_parse_all_extensions(SSL *s, int context, RAW_EXTENSION *exts,
@@ -177,6 +179,8 @@ __owur int tls_parse_all_extensions(SSL *s, int context, RAW_EXTENSION *exts,
 __owur int should_add_extension(SSL *s, unsigned int extctx,
                                 unsigned int thisctx, int max_version);
 __owur int tls_construct_extensions(SSL *s, WPACKET *pkt, unsigned int context,
+                                    X509 *x, size_t chainidx);
+__owur int tls_construct_extensions_normal_serverhello(SSL *s, WPACKET *pkt, unsigned int context,
                                     X509 *x, size_t chainidx);
 
 __owur int tls_psk_do_binder(SSL *s, const EVP_MD *md,

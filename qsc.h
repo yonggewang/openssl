@@ -30,6 +30,32 @@
     { 0x2F2D, "p384_hqc192" }, \
     { 0x022E, "hqc256" }, \
     { 0x2F2E, "p521_hqc256" }, \
+    { 0x024D, "rlcel1" }, \
+    { 0x2F4D, "p256_rlcel1" }, \
+    { 0x024E, "rlcel3" }, \
+    { 0x2F4E, "p384_rlcel3" }, \
+    { 0x024F, "rlcel5" }, \
+    { 0x2F4F, "p521_rlcel5" }, \
+    { 0x0239, "classicmceliece348864" }, \
+    { 0x2F50, "p256_classicmceliece348864" }, \
+    { 0x0244, "classicmceliece348864f" }, \
+    { 0x2F51, "p256_classicmceliece348864f" }, \
+    { 0x0245, "classicmceliece460896" }, \
+    { 0x2F52, "p384_classicmceliece460896" }, \
+    { 0x0246, "classicmceliece460896f" }, \
+    { 0x2F53, "p384_classicmceliece460896f" }, \
+    { 0x0247, "classicmceliece6688128" }, \
+    { 0x2F54, "p521_classicmceliece6688128" }, \
+    { 0x0248, "classicmceliece6688128f" }, \
+    { 0x2F55, "p521_classicmceliece6688128f" }, \
+    { 0x0249, "classicmceliece6960119" }, \
+    { 0x2F56, "p521_classicmceliece6960119" }, \
+    { 0x024A, "classicmceliece6960119f" }, \
+    { 0x2F57, "p521_classicmceliece6960119f" }, \
+    { 0x024B, "classicmceliece8192128" }, \
+    { 0x2F58, "p521_classicmceliece8192128" }, \
+    { 0x024C, "classicmceliece8192128f" }, \
+    { 0x2F59, "p521_classicmceliece8192128f" }, \
 ///// OQS_TEMPLATE_FRAGMENT_OQS_CURVE_ID_NAME_STR_END
 
 ///// OQS_TEMPLATE_FRAGMENT_ASSIGN_SIG_CPS_START

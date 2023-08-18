@@ -611,7 +611,8 @@ static int add_key_share(SSL *s, WPACKET *pkt, unsigned int curve_id)
     unsigned char *encoded_point = NULL, *classical_encoded_point = NULL, *oqs_encoded_point = NULL;
     EVP_PKEY *key_share_key = NULL;
     size_t encodedlen = 0;
-    uint16_t classical_encodedlen = 0, oqs_encodedlen = 0;
+    uint16_t classical_encodedlen = 0;
+    uint32_t oqs_encodedlen = 0;
     int do_pqc = IS_OQS_KEM_CURVEID(curve_id); /* 1 if post-quantum alg, 0 otherwise */
     int do_hybrid = IS_OQS_KEM_HYBRID_CURVEID(curve_id); /* 1 if post-quantum hybrid alg, 0 otherwise */
     if (s->s3->tmp.pkey != NULL) {
@@ -678,7 +679,7 @@ static int add_key_share(SSL *s, WPACKET *pkt, unsigned int curve_id)
     }
 
     if (do_hybrid) {
-      uint16_t encodedlen16;
+      uint32_t encodedlen16;
       if (!OQS_encode_hybrid_message(classical_encoded_point, classical_encodedlen, oqs_encoded_point, oqs_encodedlen, &encoded_point, &encodedlen16)) {
         goto err;
       }
@@ -694,13 +695,27 @@ static int add_key_share(SSL *s, WPACKET *pkt, unsigned int curve_id)
     }
 
     /* Create KeyShareEntry */
-    if (!WPACKET_put_bytes_u16(pkt, curve_id)
-            || !WPACKET_sub_memcpy_u16(pkt, encoded_point, encodedlen)) {
-        SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_F_ADD_KEY_SHARE,
-                 ERR_R_INTERNAL_ERROR);
-        goto err;
-    }
-
+   if (((curve_id) == 0x024D) || ((curve_id) == 0x024E) || ((curve_id) == 0x024F) || ((curve_id) == 0x0239)
+   || ((curve_id) == 0x0244) || ((curve_id) == 0x0245) || ((curve_id) == 0x0246) || ((curve_id) == 0x0247) 
+   || ((curve_id) == 0x0248) || ((curve_id) == 0x0249) || ((curve_id) == 0x024A) || ((curve_id) == 0x024B) 
+   || ((curve_id) == 0x024C) || ((curve_id) == 0x2F50) || ((curve_id) == 0x2F51) || ((curve_id) == 0x2F52) 
+   || ((curve_id) == 0x2F53) || ((curve_id) == 0x2F54) || ((curve_id) == 0x2F55) || ((curve_id) == 0x2F56) 
+   || ((curve_id) == 0x2F57) || ((curve_id) == 0x2F58) || ((curve_id) == 0x2F59) || ((curve_id) == 0x2F4D) 
+   || ((curve_id) == 0x2F4E) || ((curve_id) == 0x2F4F)) {
+       if (!WPACKET_put_bytes_u16(pkt, curve_id)
+               || !WPACKET_sub_memcpy_u32(pkt, encoded_point, encodedlen)) { //this could be u24? Yongge Wang
+           SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_F_ADD_KEY_SHARE,
+                    ERR_R_INTERNAL_ERROR);
+           goto err;
+       }
+   } else {
+      if (!WPACKET_put_bytes_u16(pkt, curve_id)
+               || !WPACKET_sub_memcpy_u16(pkt, encoded_point, encodedlen)) {
+           SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_F_ADD_KEY_SHARE,
+                    ERR_R_INTERNAL_ERROR);
+           goto err;
+       }
+   }
     /*
      * TODO(TLS1.3): When changing to send more than one key_share we're
      * going to need to be able to save more than one EVP_PKEY. For now
@@ -728,17 +743,6 @@ EXT_RETURN tls_construct_ctos_key_share(SSL *s, WPACKET *pkt,
     const uint16_t *pgroups = NULL;
     uint16_t curve_id = 0;
 
-    /* key_share extension */
-    if (!WPACKET_put_bytes_u16(pkt, TLSEXT_TYPE_key_share)
-               /* Extension data sub-packet */
-            || !WPACKET_start_sub_packet_u16(pkt)
-               /* KeyShare list sub-packet */
-            || !WPACKET_start_sub_packet_u16(pkt)) {
-        SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_F_TLS_CONSTRUCT_CTOS_KEY_SHARE,
-                 ERR_R_INTERNAL_ERROR);
-        return EXT_RETURN_FAIL;
-    }
-
     tls1_get_supported_groups(s, &pgroups, &num_groups);
 
     /*
@@ -757,6 +761,35 @@ EXT_RETURN tls_construct_ctos_key_share(SSL *s, WPACKET *pkt,
             break;
         }
     }
+
+    /* key_share extension */
+   if (((curve_id) == 0x024D) || ((curve_id) == 0x024E) || ((curve_id) == 0x024F) || ((curve_id) == 0x0239)
+   || ((curve_id) == 0x0244) || ((curve_id) == 0x0245) || ((curve_id) == 0x0246) || ((curve_id) == 0x0247) 
+   || ((curve_id) == 0x0248) || ((curve_id) == 0x0249) || ((curve_id) == 0x024A) || ((curve_id) == 0x024B) 
+   || ((curve_id) == 0x024C) || ((curve_id) == 0x2F50) || ((curve_id) == 0x2F51) || ((curve_id) == 0x2F52) 
+   || ((curve_id) == 0x2F53) || ((curve_id) == 0x2F54) || ((curve_id) == 0x2F55) || ((curve_id) == 0x2F56) 
+   || ((curve_id) == 0x2F57) || ((curve_id) == 0x2F58) || ((curve_id) == 0x2F59) || ((curve_id) == 0x2F4D) 
+   || ((curve_id) == 0x2F4E) || ((curve_id) == 0x2F4F)) {
+       if (!WPACKET_put_bytes_u16(pkt, TLSEXT_TYPE_key_share)
+                  /* Extension data sub-packet */
+               || !WPACKET_start_sub_packet_u32(pkt) //this could be u24? Yongge Wang
+                  /* KeyShare list sub-packet */
+               || !WPACKET_start_sub_packet_u32(pkt)) { //this could be u24? Yongge Wang
+           SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_F_TLS_CONSTRUCT_CTOS_KEY_SHARE,
+                    ERR_R_INTERNAL_ERROR);
+           return EXT_RETURN_FAIL;
+       }
+   } else {
+      if (!WPACKET_put_bytes_u16(pkt, TLSEXT_TYPE_key_share)
+                  /* Extension data sub-packet */
+               || !WPACKET_start_sub_packet_u16(pkt)
+                  /* KeyShare list sub-packet */
+               || !WPACKET_start_sub_packet_u16(pkt)) {
+           SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_F_TLS_CONSTRUCT_CTOS_KEY_SHARE,
+                    ERR_R_INTERNAL_ERROR);
+           return EXT_RETURN_FAIL;
+       }
+   }
 
     if (curve_id == 0) {
         SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_F_TLS_CONSTRUCT_CTOS_KEY_SHARE,
@@ -1878,7 +1911,8 @@ int tls_parse_stoc_key_share(SSL *s, PACKET *pkt, unsigned int context, X509 *x,
     unsigned int group_id;
     PACKET encoded_pt;
     unsigned char *classical_encoded_pt = NULL, *oqs_encoded_pt = NULL;
-    uint16_t classical_encodedlen, oqs_encodedlen;
+    uint16_t classical_encodedlen;
+    uint32_t oqs_encodedlen;
     unsigned char *shared_secret = NULL, *oqs_shared_secret = NULL;
     size_t shared_secret_len = 0, oqs_shared_secret_len = 0;
     EVP_PKEY *ckey = s->s3->tmp.pkey, *skey = NULL;

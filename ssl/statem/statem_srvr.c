@@ -1127,7 +1127,7 @@ int ossl_statem_server_construct_message(SSL *s, WPACKET *pkt,
  *  2 + # length of extensions
  *  2^16-1 # maximum length of extensions
  */
-#define CLIENT_HELLO_MAX_LENGTH         131396
+#define CLIENT_HELLO_MAX_LENGTH         1424000
 
 #define CLIENT_KEY_EXCH_MAX_LENGTH      2048
 #define NEXT_PROTO_MAX_LENGTH           514
@@ -1576,11 +1576,20 @@ MSG_PROCESS_RETURN tls_process_client_hello(SSL *s, PACKET *pkt)
         if (PACKET_remaining(pkt) == 0) {
             PACKET_null_init(&clienthello->extensions);
         } else {
-            if (!PACKET_get_length_prefixed_2(pkt, &clienthello->extensions)
-                    || PACKET_remaining(pkt) != 0) {
-                SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PROCESS_CLIENT_HELLO,
-                         SSL_R_LENGTH_MISMATCH);
-                goto err;
+            if ((s->s3->tmp.message_size) < 188317) {
+              if (!PACKET_get_length_prefixed_2(pkt, &clienthello->extensions)
+                      || PACKET_remaining(pkt) != 0) {
+                  SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PROCESS_CLIENT_HELLO,
+                           SSL_R_LENGTH_MISMATCH);
+                  goto err;
+              }
+            } else {
+              if (!PACKET_get_length_prefixed_4(pkt, &clienthello->extensions)
+                      || PACKET_remaining(pkt) != 0) {
+                  SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PROCESS_CLIENT_HELLO,
+                           SSL_R_LENGTH_MISMATCH);
+                  goto err;
+              }
             }
         }
     }
@@ -1595,11 +1604,20 @@ MSG_PROCESS_RETURN tls_process_client_hello(SSL *s, PACKET *pkt)
 
     /* Preserve the raw extensions PACKET for later use */
     extensions = clienthello->extensions;
-    if (!tls_collect_extensions(s, &extensions, SSL_EXT_CLIENT_HELLO,
-                                &clienthello->pre_proc_exts,
-                                &clienthello->pre_proc_exts_len, 1)) {
-        /* SSLfatal already been called */
-        goto err;
+    if ((s->s3->tmp.message_size) < 188317) {
+       if (!tls_collect_extensions_serverhello_rlce(s, &extensions, SSL_EXT_CLIENT_HELLO,
+                                   &clienthello->pre_proc_exts,
+                                   &clienthello->pre_proc_exts_len, 1)) {
+           /* SSLfatal already been called */
+           goto err;
+       }
+    } else {
+       if (!tls_collect_extensions(s, &extensions, SSL_EXT_CLIENT_HELLO,
+                                   &clienthello->pre_proc_exts,
+                                   &clienthello->pre_proc_exts_len, 1)) { 
+           /* SSLfatal already been called */
+           goto err;
+       }
     }
     s->clienthello = clienthello;
 
@@ -2445,15 +2463,34 @@ int tls_construct_server_hello(SSL *s, WPACKET *pkt)
         return 0;
     }
 
-    if (!tls_construct_extensions(s, pkt,
-                                  s->hello_retry_request == SSL_HRR_PENDING
-                                      ? SSL_EXT_TLS1_3_HELLO_RETRY_REQUEST
-                                      : (SSL_IS_TLS13(s)
-                                          ? SSL_EXT_TLS1_3_SERVER_HELLO
-                                          : SSL_EXT_TLS1_2_SERVER_HELLO),
-                                  NULL, 0)) {
-        /* SSLfatal() already called */
-        return 0;
+     if (((s->s3->group_id) == 0x024D) || ((s->s3->group_id) == 0x024E) || ((s->s3->group_id) == 0x024F) || ((s->s3->group_id) == 0x0239)
+   || ((s->s3->group_id) == 0x0244) || ((s->s3->group_id) == 0x0245) || ((s->s3->group_id) == 0x0246) || ((s->s3->group_id) == 0x0247) 
+   || ((s->s3->group_id) == 0x0248) || ((s->s3->group_id) == 0x0249) || ((s->s3->group_id) == 0x024A) || ((s->s3->group_id) == 0x024B) 
+   || ((s->s3->group_id) == 0x024C) || ((s->s3->group_id) == 0x2F50) || ((s->s3->group_id) == 0x2F51) || ((s->s3->group_id) == 0x2F52) 
+   || ((s->s3->group_id) == 0x2F53) || ((s->s3->group_id) == 0x2F54) || ((s->s3->group_id) == 0x2F55) || ((s->s3->group_id) == 0x2F56) 
+   || ((s->s3->group_id) == 0x2F57) || ((s->s3->group_id) == 0x2F58) || ((s->s3->group_id) == 0x2F59) || ((s->s3->group_id) == 0x2F4D) 
+   || ((s->s3->group_id) == 0x2F4E) || ((s->s3->group_id) == 0x2F4F)) {
+        if (!tls_construct_extensions_normal_serverhello(s, pkt,
+                                      s->hello_retry_request == SSL_HRR_PENDING
+                                          ? SSL_EXT_TLS1_3_HELLO_RETRY_REQUEST
+                                          : (SSL_IS_TLS13(s)
+                                              ? SSL_EXT_TLS1_3_SERVER_HELLO
+                                              : SSL_EXT_TLS1_2_SERVER_HELLO),
+                                      NULL, 0)) {
+            /* SSLfatal() already called */
+            return 0;
+        }
+    } else {
+       if (!tls_construct_extensions(s, pkt,
+                                      s->hello_retry_request == SSL_HRR_PENDING
+                                          ? SSL_EXT_TLS1_3_HELLO_RETRY_REQUEST
+                                          : (SSL_IS_TLS13(s)
+                                              ? SSL_EXT_TLS1_3_SERVER_HELLO
+                                              : SSL_EXT_TLS1_2_SERVER_HELLO),
+                                      NULL, 0)) {
+            /* SSLfatal() already called */
+            return 0;
+        }
     }
 
     if (s->hello_retry_request == SSL_HRR_PENDING) {
@@ -2888,11 +2925,26 @@ int tls_construct_certificate_request(SSL *s, WPACKET *pkt)
             }
         }
 
-        if (!tls_construct_extensions(s, pkt,
-                                      SSL_EXT_TLS1_3_CERTIFICATE_REQUEST, NULL,
-                                      0)) {
-            /* SSLfatal() already called */
-            return 0;
+        if (((s->s3->group_id) == 0x024D) || ((s->s3->group_id) == 0x024E) || ((s->s3->group_id) == 0x024F) || ((s->s3->group_id) == 0x0239)
+   || ((s->s3->group_id) == 0x0244) || ((s->s3->group_id) == 0x0245) || ((s->s3->group_id) == 0x0246) || ((s->s3->group_id) == 0x0247) 
+   || ((s->s3->group_id) == 0x0248) || ((s->s3->group_id) == 0x0249) || ((s->s3->group_id) == 0x024A) || ((s->s3->group_id) == 0x024B) 
+   || ((s->s3->group_id) == 0x024C) || ((s->s3->group_id) == 0x2F50) || ((s->s3->group_id) == 0x2F51) || ((s->s3->group_id) == 0x2F52) 
+   || ((s->s3->group_id) == 0x2F53) || ((s->s3->group_id) == 0x2F54) || ((s->s3->group_id) == 0x2F55) || ((s->s3->group_id) == 0x2F56) 
+   || ((s->s3->group_id) == 0x2F57) || ((s->s3->group_id) == 0x2F58) || ((s->s3->group_id) == 0x2F59) || ((s->s3->group_id) == 0x2F4D) 
+   || ((s->s3->group_id) == 0x2F4E) || ((s->s3->group_id) == 0x2F4F)) {
+            if (!tls_construct_extensions_normal_serverhello(s, pkt,
+                                          SSL_EXT_TLS1_3_CERTIFICATE_REQUEST, NULL,
+                                          0)) {
+                /* SSLfatal() already called */
+                return 0;
+            }
+        } else {
+            if (!tls_construct_extensions(s, pkt,
+                                          SSL_EXT_TLS1_3_CERTIFICATE_REQUEST, NULL,
+                                          0)) {
+                /* SSLfatal() already called */
+                return 0;
+            }
         }
         goto done;
     }
@@ -4267,11 +4319,25 @@ MSG_PROCESS_RETURN tls_process_next_proto(SSL *s, PACKET *pkt)
 
 static int tls_construct_encrypted_extensions(SSL *s, WPACKET *pkt)
 {
-    if (!tls_construct_extensions(s, pkt, SSL_EXT_TLS1_3_ENCRYPTED_EXTENSIONS,
-                                  NULL, 0)) {
-        /* SSLfatal() already called */
-        return 0;
-    }
+   if (((s->s3->group_id) == 0x024D) || ((s->s3->group_id) == 0x024E) || ((s->s3->group_id) == 0x024F) || ((s->s3->group_id) == 0x0239)
+   || ((s->s3->group_id) == 0x0244) || ((s->s3->group_id) == 0x0245) || ((s->s3->group_id) == 0x0246) || ((s->s3->group_id) == 0x0247) 
+   || ((s->s3->group_id) == 0x0248) || ((s->s3->group_id) == 0x0249) || ((s->s3->group_id) == 0x024A) || ((s->s3->group_id) == 0x024B) 
+   || ((s->s3->group_id) == 0x024C) || ((s->s3->group_id) == 0x2F50) || ((s->s3->group_id) == 0x2F51) || ((s->s3->group_id) == 0x2F52) 
+   || ((s->s3->group_id) == 0x2F53) || ((s->s3->group_id) == 0x2F54) || ((s->s3->group_id) == 0x2F55) || ((s->s3->group_id) == 0x2F56) 
+   || ((s->s3->group_id) == 0x2F57) || ((s->s3->group_id) == 0x2F58) || ((s->s3->group_id) == 0x2F59) || ((s->s3->group_id) == 0x2F4D) 
+   || ((s->s3->group_id) == 0x2F4E) || ((s->s3->group_id) == 0x2F4F)) {
+      if (!tls_construct_extensions_normal_serverhello(s, pkt, SSL_EXT_TLS1_3_ENCRYPTED_EXTENSIONS,
+                                    NULL, 0)) {
+          /* SSLfatal() already called */
+          return 0;
+      }
+   } else {
+      if (!tls_construct_extensions(s, pkt, SSL_EXT_TLS1_3_ENCRYPTED_EXTENSIONS,
+                                    NULL, 0)) {
+          /* SSLfatal() already called */
+          return 0;
+      }
+   }
 
     return 1;
 }

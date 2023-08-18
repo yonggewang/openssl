@@ -88,8 +88,8 @@
 # define EVP_PKEY_P256_SPHINCSSHAKE128FSIMPLE NID_p256_sphincsshake128fsimple
 # define EVP_PKEY_RSA3072_SPHINCSSHAKE128FSIMPLE NID_rsa3072_sphincsshake128fsimple
 #define OQS_OPENSSL_SIG_algs_length 23
-#define OQS_OPENSSL_KEM_algs_length 15
-#define IS_OQS_OPENSSL_KEM_NID(a) ((a >= 0x01FF) && (a <= NID_p521_hqc256))
+#define OQS_OPENSSL_KEM_algs_length 28
+#define IS_OQS_OPENSSL_KEM_NID(a) ((a >= 0x01FF) && (a <= NID_p521_classicmceliece8192128f))
 #define IS_OQS_OPENSSL_SIG_NID(a) ((a >= NID_dilithium2) && (a <= NID_rsa3072_sphincsshake128fsimple))
 /////// OQS_TEMPLATE_FRAGMENT_DEFINE_EVP_PKEYS_END
 const char *OQSKEM_options(void);

@@ -8,9 +8,9 @@
 static int OQS_encode_hybrid_message(const unsigned char* classical_msg,
                                      const uint16_t classical_msg_len,
                                      const unsigned char* pq_msg,
-                                     const uint16_t pq_msg_len,
+                                     const uint32_t pq_msg_len,
                                      unsigned char** hybrid_msg,
-                                     uint16_t* hybrid_msg_len) {
+                                     uint32_t* hybrid_msg_len) {
   *hybrid_msg_len = classical_msg_len + pq_msg_len;
   *hybrid_msg = OPENSSL_malloc(*hybrid_msg_len);
   if (*hybrid_msg == NULL) {
@@ -34,7 +34,7 @@ static int OQS_decode_hybrid_message(const unsigned char* hybrid_msg,
                                      unsigned char** classical_msg,
                                      uint16_t* classical_msg_len,
                                      unsigned char** pq_msg,
-                                     uint16_t* pq_msg_len) {
+                                     uint32_t* pq_msg_len) {
 
   int ec_curve_id = OQS_KEM_CLASSICAL_CURVEID(group_id);
   unsigned int pq_kem_id = OQS_KEM_NID(group_id);

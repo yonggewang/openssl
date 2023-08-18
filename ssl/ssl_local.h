@@ -492,8 +492,21 @@
   (nid == NID_hqc128 ? 0x022C : \
   (nid == NID_hqc192 ? 0x022D : \
   (nid == NID_hqc256 ? 0x022E : \
+  (nid == NID_rlcel1 ? 0x024D : \
+  (nid == NID_rlcel3 ? 0x024E : \
+  (nid == NID_rlcel5 ? 0x024F : \
+  (nid == NID_classicmceliece348864 ? 0x0239 : \
+  (nid == NID_classicmceliece348864f ? 0x0244 : \
+  (nid == NID_classicmceliece460896 ? 0x0245 : \
+  (nid == NID_classicmceliece460896f ? 0x0246 : \
+  (nid == NID_classicmceliece6688128 ? 0x0247 : \
+  (nid == NID_classicmceliece6688128f ? 0x0248 : \
+  (nid == NID_classicmceliece6960119 ? 0x0249 : \
+  (nid == NID_classicmceliece6960119f ? 0x024A : \
+  (nid == NID_classicmceliece8192128 ? 0x024B : \
+  (nid == NID_classicmceliece8192128f ? 0x024C : \
   0 \
-  )))))))))))))))
+  ))))))))))))))))))))))))))))
 ///// OQS_TEMPLATE_FRAGMENT_OQS_KEM_CURVEID_END
 
 ///// OQS_TEMPLATE_FRAGMENT_OQS_KEM_HYBRID_CURVEID_START
@@ -513,8 +526,21 @@
     (nid == NID_p256_hqc128 ? 0x2F2C : \
     (nid == NID_p384_hqc192 ? 0x2F2D : \
     (nid == NID_p521_hqc256 ? 0x2F2E : \
+    (nid == NID_p256_rlcel1 ? 0x2F4D : \
+    (nid == NID_p384_rlcel3 ? 0x2F4E : \
+    (nid == NID_p521_rlcel5 ? 0x2F4F : \
+    (nid == NID_p256_classicmceliece348864 ? 0x2F50 : \
+    (nid == NID_p256_classicmceliece348864f ? 0x2F51 : \
+    (nid == NID_p384_classicmceliece460896 ? 0x2F52 : \
+    (nid == NID_p384_classicmceliece460896f ? 0x2F53 : \
+    (nid == NID_p521_classicmceliece6688128 ? 0x2F54 : \
+    (nid == NID_p521_classicmceliece6688128f ? 0x2F55 : \
+    (nid == NID_p521_classicmceliece6960119 ? 0x2F56 : \
+    (nid == NID_p521_classicmceliece6960119f ? 0x2F57 : \
+    (nid == NID_p521_classicmceliece8192128 ? 0x2F58 : \
+    (nid == NID_p521_classicmceliece8192128f ? 0x2F59 : \
   0 \
-  )))))))))))))))
+  ))))))))))))))))))))))))))))
 ///// OQS_TEMPLATE_FRAGMENT_OQS_KEM_HYBRID_CURVEID_END
 
   /* Returns the non-hybrid OQS KEM NID for a PQ or hybrid curve ID */
@@ -535,8 +561,21 @@
   (curveID == 0x022C || curveID == 0x2F2C ? NID_hqc128 : \
   (curveID == 0x022D || curveID == 0x2F2D ? NID_hqc192 : \
   (curveID == 0x022E || curveID == 0x2F2E ? NID_hqc256 : \
+  (curveID == 0x024D || curveID == 0x2F4D ? NID_rlcel1 : \
+  (curveID == 0x024E || curveID == 0x2F4E ? NID_rlcel3 : \
+  (curveID == 0x024F || curveID == 0x2F4F ? NID_rlcel5 : \
+  (curveID == 0x0239 || curveID == 0x2F50 ? NID_classicmceliece348864 : \
+  (curveID == 0x0244 || curveID == 0x2F51 ? NID_classicmceliece348864f : \
+  (curveID == 0x0245 || curveID == 0x2F52 ? NID_classicmceliece460896 : \
+  (curveID == 0x0246 || curveID == 0x2F53 ? NID_classicmceliece460896f : \
+  (curveID == 0x0247 || curveID == 0x2F54 ? NID_classicmceliece6688128 : \
+  (curveID == 0x0248 || curveID == 0x2F55 ? NID_classicmceliece6688128f : \
+  (curveID == 0x0249 || curveID == 0x2F56 ? NID_classicmceliece6960119 : \
+  (curveID == 0x024A || curveID == 0x2F57 ? NID_classicmceliece6960119f : \
+  (curveID == 0x024B || curveID == 0x2F58 ? NID_classicmceliece8192128 : \
+  (curveID == 0x024C || curveID == 0x2F59 ? NID_classicmceliece8192128f : \
   0 \
-  )))))))))))))))
+  ))))))))))))))))))))))))))))
 ///// OQS_TEMPLATE_FRAGMENT_OQS_KEM_NID_END
 
   /* Returns the hybrid OQS KEM NID for a hybrid curve ID */
@@ -557,8 +596,21 @@
     (curveID == 0x2F2C ? NID_p256_hqc128 : \
     (curveID == 0x2F2D ? NID_p384_hqc192 : \
     (curveID == 0x2F2E ? NID_p521_hqc256 : \
+    (curveID == 0x2F4D ? NID_p256_rlcel1 : \
+    (curveID == 0x2F4E ? NID_p384_rlcel3 : \
+    (curveID == 0x2F4F ? NID_p521_rlcel5 : \
+    (curveID == 0x2F50 ? NID_p256_classicmceliece348864 : \
+    (curveID == 0x2F51 ? NID_p256_classicmceliece348864f : \
+    (curveID == 0x2F52 ? NID_p384_classicmceliece460896 : \
+    (curveID == 0x2F53 ? NID_p384_classicmceliece460896f : \
+    (curveID == 0x2F54 ? NID_p521_classicmceliece6688128 : \
+    (curveID == 0x2F55 ? NID_p521_classicmceliece6688128f : \
+    (curveID == 0x2F56 ? NID_p521_classicmceliece6960119 : \
+    (curveID == 0x2F57 ? NID_p521_classicmceliece6960119f : \
+    (curveID == 0x2F58 ? NID_p521_classicmceliece8192128 : \
+    (curveID == 0x2F59 ? NID_p521_classicmceliece8192128f : \
   0 \
-  )))))))))))))))
+  ))))))))))))))))))))))))))))
 ///// OQS_TEMPLATE_FRAGMENT_OQS_HYBRID_KEM_NID_END
 
 /* Returns true if the curve ID is for an OQS KEM */
@@ -587,8 +639,21 @@
   (nid == NID_hqc128 ? OQS_KEM_alg_hqc_128 : \
   (nid == NID_hqc192 ? OQS_KEM_alg_hqc_192 : \
   (nid == NID_hqc256 ? OQS_KEM_alg_hqc_256 : \
+  (nid == NID_rlcel1 ? OQS_KEM_alg_RLCE_l1 : \
+  (nid == NID_rlcel3 ? OQS_KEM_alg_RLCE_l3 : \
+  (nid == NID_rlcel5 ? OQS_KEM_alg_RLCE_l5 : \
+  (nid == NID_classicmceliece348864 ? OQS_KEM_alg_classic_mceliece_348864 : \
+  (nid == NID_classicmceliece348864f ? OQS_KEM_alg_classic_mceliece_348864f : \
+  (nid == NID_classicmceliece460896 ? OQS_KEM_alg_classic_mceliece_460896 : \
+  (nid == NID_classicmceliece460896f ? OQS_KEM_alg_classic_mceliece_460896f : \
+  (nid == NID_classicmceliece6688128 ? OQS_KEM_alg_classic_mceliece_6688128 : \
+  (nid == NID_classicmceliece6688128f ? OQS_KEM_alg_classic_mceliece_6688128f : \
+  (nid == NID_classicmceliece6960119 ? OQS_KEM_alg_classic_mceliece_6960119 : \
+  (nid == NID_classicmceliece6960119f ? OQS_KEM_alg_classic_mceliece_6960119f : \
+  (nid == NID_classicmceliece8192128 ? OQS_KEM_alg_classic_mceliece_8192128 : \
+  (nid == NID_classicmceliece8192128f ? OQS_KEM_alg_classic_mceliece_8192128f : \
   0 \
-  )))))))))))))))
+  ))))))))))))))))))))))))))))
 ///// OQS_TEMPLATE_FRAGMENT_OQS_ALG_NAME_END
 
 /* Returns the classic curve ID for a given hybrid curve */
@@ -610,8 +675,21 @@
   (cid == 0x2F2C ?23: \
   (cid == 0x2F2D ?24: \
   (cid == 0x2F2E ?25: \
+  (cid == 0x2F4D ?23: \
+  (cid == 0x2F4E ?24: \
+  (cid == 0x2F4F ?25: \
+  (cid == 0x2F50 ?23: \
+  (cid == 0x2F51 ?23: \
+  (cid == 0x2F52 ?24: \
+  (cid == 0x2F53 ?24: \
+  (cid == 0x2F54 ?25: \
+  (cid == 0x2F55 ?25: \
+  (cid == 0x2F56 ?25: \
+  (cid == 0x2F57 ?25: \
+  (cid == 0x2F58 ?25: \
+  (cid == 0x2F59 ?25: \
   23 \
-  ))))))))))))))))
+  )))))))))))))))))))))))))))))
 ///// OQS_TEMPLATE_FRAGMENT_OQS_MAP_HYBRID_END
 
 /* Returns the classical nid for an hybrid alg */

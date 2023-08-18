@@ -633,7 +633,8 @@ int tls_parse_ctos_key_share(SSL *s, PACKET *pkt, unsigned int context, X509 *x,
     int do_pqc = 0; /* 1 if post-quantum alg, 0 otherwise */
     int do_hybrid = 0; /* 1 if post-quantum hybrid alg, 0 otherwise */
     unsigned char *classical_encoded_pt = NULL, *oqs_encoded_pt = NULL;
-    uint16_t classical_encodedlen = 0, oqs_encodedlen = 0;
+    uint16_t classical_encodedlen = 0;
+    uint32_t oqs_encodedlen = 0;
     int has_error = 0;
 
     if (s->hit && (s->ext.psk_kex_mode & TLSEXT_KEX_MODE_FLAG_KE_DHE) == 0)
@@ -646,10 +647,18 @@ int tls_parse_ctos_key_share(SSL *s, PACKET *pkt, unsigned int context, X509 *x,
         return 0;
     }
 
-    if (!PACKET_as_length_prefixed_2(pkt, &key_share_list)) {
-        SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PARSE_CTOS_KEY_SHARE,
-                 SSL_R_LENGTH_MISMATCH);
-        return 0;
+    if ((s->s3->tmp.message_size) < 188317) {
+       if (!PACKET_as_length_prefixed_2(pkt, &key_share_list)) {
+           SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PARSE_CTOS_KEY_SHARE,
+                    SSL_R_LENGTH_MISMATCH);
+           return 0;
+       }
+    } else {
+       if (!PACKET_as_length_prefixed_4(pkt, &key_share_list)) {
+           SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PARSE_CTOS_KEY_SHARE,
+                    SSL_R_LENGTH_MISMATCH);
+           return 0;
+    }
     }
 
     /* Get our list of supported groups */
@@ -679,12 +688,22 @@ int tls_parse_ctos_key_share(SSL *s, PACKET *pkt, unsigned int context, X509 *x,
     }
 
     while (PACKET_remaining(&key_share_list) > 0) {
-        if (!PACKET_get_net_2(&key_share_list, &group_id)
-                || !PACKET_get_length_prefixed_2(&key_share_list, &encoded_pt)
-                || PACKET_remaining(&encoded_pt) == 0) {
-            SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PARSE_CTOS_KEY_SHARE,
-                     SSL_R_LENGTH_MISMATCH);
-            return 0;
+        if ((s->s3->tmp.message_size) < 188317) {
+           if (!PACKET_get_net_2(&key_share_list, &group_id)
+                   || !PACKET_get_length_prefixed_2(&key_share_list, &encoded_pt)
+                   || PACKET_remaining(&encoded_pt) == 0) {
+               SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PARSE_CTOS_KEY_SHARE,
+                        SSL_R_LENGTH_MISMATCH);
+               return 0;
+           }
+        } else {
+           if (!PACKET_get_net_2(&key_share_list, &group_id)
+                   || !PACKET_get_length_prefixed_4(&key_share_list, &encoded_pt)
+                   || PACKET_remaining(&encoded_pt) == 0) {
+               SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PARSE_CTOS_KEY_SHARE,
+                        SSL_R_LENGTH_MISMATCH);
+               return 0;
+           }
         }
 
         /*
@@ -1908,7 +1927,7 @@ EXT_RETURN tls_construct_stoc_key_share(SSL *s, WPACKET *pkt,
     }
 
     if (do_hybrid) {
-      uint16_t encoded_pt_len16;
+      uint32_t encoded_pt_len16;
       int ret = OQS_encode_hybrid_message(classical_encodedPoint, classical_encoded_pt_len, oqs_encodedPoint, oqs_encoded_pt_len, &encodedPoint, &encoded_pt_len16);
       encoded_pt_len = encoded_pt_len16;
       OPENSSL_free(classical_encodedPoint);

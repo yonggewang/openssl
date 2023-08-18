@@ -202,6 +202,19 @@ static const TLS_GROUP_INFO oqs_nid_list[] = {
     {NID_hqc128, 128, TLS_CURVE_CUSTOM}, /* hqc128 (0x022C) */
     {NID_hqc192, 192, TLS_CURVE_CUSTOM}, /* hqc192 (0x022D) */
     {NID_hqc256, 256, TLS_CURVE_CUSTOM}, /* hqc256 (0x022E) */
+    {NID_rlcel1, 128, TLS_CURVE_CUSTOM}, /* rlcel1 (0x024D) */
+    {NID_rlcel3, 192, TLS_CURVE_CUSTOM}, /* rlcel3 (0x024E) */
+    {NID_rlcel5, 256, TLS_CURVE_CUSTOM}, /* rlcel5 (0x024F) */
+    {NID_classicmceliece348864, 128, TLS_CURVE_CUSTOM}, /* classicmceliece348864 (0x0239) */
+    {NID_classicmceliece348864f, 128, TLS_CURVE_CUSTOM}, /* classicmceliece348864f (0x0244) */
+    {NID_classicmceliece460896, 192, TLS_CURVE_CUSTOM}, /* classicmceliece460896 (0x0245) */
+    {NID_classicmceliece460896f, 192, TLS_CURVE_CUSTOM}, /* classicmceliece460896f (0x0246) */
+    {NID_classicmceliece6688128, 256, TLS_CURVE_CUSTOM}, /* classicmceliece6688128 (0x0247) */
+    {NID_classicmceliece6688128f, 256, TLS_CURVE_CUSTOM}, /* classicmceliece6688128f (0x0248) */
+    {NID_classicmceliece6960119, 256, TLS_CURVE_CUSTOM}, /* classicmceliece6960119 (0x0249) */
+    {NID_classicmceliece6960119f, 256, TLS_CURVE_CUSTOM}, /* classicmceliece6960119f (0x024A) */
+    {NID_classicmceliece8192128, 256, TLS_CURVE_CUSTOM}, /* classicmceliece8192128 (0x024B) */
+    {NID_classicmceliece8192128f, 256, TLS_CURVE_CUSTOM}, /* classicmceliece8192128f (0x024C) */
 ///// OQS_TEMPLATE_FRAGMENT_OQS_NID_LIST_END
 };
     /* Hybrid OQS groups. Security level is classical. */
@@ -222,6 +235,19 @@ static const TLS_GROUP_INFO oqs_hybrid_nid_list[] = {
  {NID_p256_hqc128, 128, TLS_CURVE_CUSTOM}, /* p256/384/521 + hqc128 hybrid (0x022C) */
  {NID_p384_hqc192, 192, TLS_CURVE_CUSTOM}, /* p256/384/521 + hqc192 hybrid (0x022D) */
  {NID_p521_hqc256, 256, TLS_CURVE_CUSTOM}, /* p256/384/521 + hqc256 hybrid (0x022E) */
+ {NID_p256_rlcel1, 128, TLS_CURVE_CUSTOM}, /* p256/384/521 + rlcel1 hybrid (0x024D) */
+ {NID_p384_rlcel3, 192, TLS_CURVE_CUSTOM}, /* p256/384/521 + rlcel3 hybrid (0x024E) */
+ {NID_p521_rlcel5, 256, TLS_CURVE_CUSTOM}, /* p256/384/521 + rlcel5 hybrid (0x024F) */
+ {NID_p256_classicmceliece348864, 128, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece348864 hybrid (0x0239) */
+ {NID_p256_classicmceliece348864f, 128, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece348864f hybrid (0x0244) */
+ {NID_p384_classicmceliece460896, 192, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece460896 hybrid (0x0245) */
+ {NID_p384_classicmceliece460896f, 192, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece460896f hybrid (0x0246) */
+ {NID_p521_classicmceliece6688128, 256, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece6688128 hybrid (0x0247) */
+ {NID_p521_classicmceliece6688128f, 256, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece6688128f hybrid (0x0248) */
+ {NID_p521_classicmceliece6960119, 256, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece6960119 hybrid (0x0249) */
+ {NID_p521_classicmceliece6960119f, 256, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece6960119f hybrid (0x024A) */
+ {NID_p521_classicmceliece8192128, 256, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece8192128 hybrid (0x024B) */
+ {NID_p521_classicmceliece8192128f, 256, TLS_CURVE_CUSTOM}, /* p256/384/521 + classicmceliece8192128f hybrid (0x024C) */
 ///// OQS_TEMPLATE_FRAGMENT_OQS_NID_LIST_HYBRID_END
 };
 
@@ -244,6 +270,9 @@ static const uint16_t eccurves_default[] = {
     0x2F3A, /* OQS kyber512 hybrid */
     0x2F41, /* OQS bikel1 hybrid */
     0x2F2C, /* OQS hqc128 hybrid */
+    0x2F4D, /* OQS rlcel1 hybrid */
+    0x2F50, /* OQS classicmceliece348864 hybrid */
+    0x2F51, /* OQS classicmceliece348864f hybrid */
 ///// OQS_TEMPLATE_FRAGMENT_ECCURVES_DEFAULT_HYBRID_END
 };
 
@@ -292,6 +321,32 @@ static const uint16_t oqs_all_tls13_server_groups[] = {
     0x2F2D, /* OQS hqc192 hybrid */
     0x022E, /* hqc256 */
     0x2F2E, /* OQS hqc256 hybrid */
+    0x024D, /* rlcel1 */
+    0x2F4D, /* OQS rlcel1 hybrid */
+    0x024E, /* rlcel3 */
+    0x2F4E, /* OQS rlcel3 hybrid */
+    0x024F, /* rlcel5 */
+    0x2F4F, /* OQS rlcel5 hybrid */
+    0x0239, /* classicmceliece348864 */
+    0x2F50, /* OQS classicmceliece348864 hybrid */
+    0x0244, /* classicmceliece348864f */
+    0x2F51, /* OQS classicmceliece348864f hybrid */
+    0x0245, /* classicmceliece460896 */
+    0x2F52, /* OQS classicmceliece460896 hybrid */
+    0x0246, /* classicmceliece460896f */
+    0x2F53, /* OQS classicmceliece460896f hybrid */
+    0x0247, /* classicmceliece6688128 */
+    0x2F54, /* OQS classicmceliece6688128 hybrid */
+    0x0248, /* classicmceliece6688128f */
+    0x2F55, /* OQS classicmceliece6688128f hybrid */
+    0x0249, /* classicmceliece6960119 */
+    0x2F56, /* OQS classicmceliece6960119 hybrid */
+    0x024A, /* classicmceliece6960119f */
+    0x2F57, /* OQS classicmceliece6960119f hybrid */
+    0x024B, /* classicmceliece8192128 */
+    0x2F58, /* OQS classicmceliece8192128 hybrid */
+    0x024C, /* classicmceliece8192128f */
+    0x2F59, /* OQS classicmceliece8192128f hybrid */
 ///// OQS_TEMPLATE_FRAGMENT_ALL_OQS_CURVEIDS_END
 };
 

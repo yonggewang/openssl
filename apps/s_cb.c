@@ -466,6 +466,19 @@ static const char* OQS_CURVE_ID_NAME_STR(int id) {
   case 0x022C: return "hqc128";
   case 0x022D: return "hqc192";
   case 0x022E: return "hqc256";
+  case 0x024D: return "rlcel1";
+  case 0x024E: return "rlcel3";
+  case 0x024F: return "rlcel5";
+  case 0x0239: return "classicmceliece348864";
+  case 0x0244: return "classicmceliece348864f";
+  case 0x0245: return "classicmceliece460896";
+  case 0x0246: return "classicmceliece460896f";
+  case 0x0247: return "classicmceliece6688128";
+  case 0x0248: return "classicmceliece6688128f";
+  case 0x0249: return "classicmceliece6960119";
+  case 0x024A: return "classicmceliece6960119f";
+  case 0x024B: return "classicmceliece8192128";
+  case 0x024C: return "classicmceliece8192128f";
   ///// OQS_TEMPLATE_FRAGMENT_OQS_CURVE_ID_NAME_STR_END
   ///// OQS_TEMPLATE_FRAGMENT_OQS_CURVE_ID_NAME_STR_HYBRID_START
    case 0x2F00: return "p256_frodo640aes hybrid";
@@ -483,6 +496,19 @@ static const char* OQS_CURVE_ID_NAME_STR(int id) {
    case 0x2F2C: return "p256_hqc128 hybrid";
    case 0x2F2D: return "p384_hqc192 hybrid";
    case 0x2F2E: return "p521_hqc256 hybrid";
+   case 0x2F4D: return "p256_rlcel1 hybrid";
+   case 0x2F4E: return "p384_rlcel3 hybrid";
+   case 0x2F4F: return "p521_rlcel5 hybrid";
+   case 0x2F50: return "p256_classicmceliece348864 hybrid";
+   case 0x2F51: return "p256_classicmceliece348864f hybrid";
+   case 0x2F52: return "p384_classicmceliece460896 hybrid";
+   case 0x2F53: return "p384_classicmceliece460896f hybrid";
+   case 0x2F54: return "p521_classicmceliece6688128 hybrid";
+   case 0x2F55: return "p521_classicmceliece6688128f hybrid";
+   case 0x2F56: return "p521_classicmceliece6960119 hybrid";
+   case 0x2F57: return "p521_classicmceliece6960119f hybrid";
+   case 0x2F58: return "p521_classicmceliece8192128 hybrid";
+   case 0x2F59: return "p521_classicmceliece8192128f hybrid";
   ///// OQS_TEMPLATE_FRAGMENT_OQS_CURVE_ID_NAME_STR_HYBRID_END
   default: return "";
   }
@@ -769,6 +795,8 @@ static STRINT_PAIR tlsext_types[] = {
     {"renegotiation info", TLSEXT_TYPE_renegotiate},
     {"signed certificate timestamps", TLSEXT_TYPE_signed_certificate_timestamp},
     {"TLS padding", TLSEXT_TYPE_padding},
+    {"key share pqc", TLSEXT_TYPE_key_share_pqc},
+    {"psk kex modes pqc", TLSEXT_TYPE_psk_kex_modes_pqc},
 #ifdef TLSEXT_TYPE_next_proto_neg
     {"next protocol", TLSEXT_TYPE_next_proto_neg},
 #endif

@@ -1290,11 +1290,49 @@ int tls_construct_client_hello(SSL *s, WPACKET *pkt)
     }
 
     /* TLS extensions */
-    if (!tls_construct_extensions(s, pkt, SSL_EXT_CLIENT_HELLO, NULL, 0)) {
-        /* SSLfatal() already called */
-        return 0;
+
+    size_t j, num_groups = 0;
+    const uint16_t *pgroups = NULL;
+    uint16_t curve_id = 0;
+
+    tls1_get_supported_groups(s, &pgroups, &num_groups);
+
+    /*
+     * TODO(TLS1.3): Make the number of key_shares sent configurable. For
+     * now, just send one
+     */
+    if (s->s3->group_id != 0) {
+        curve_id = s->s3->group_id;
+    } else {
+        for (j = 0; j < num_groups; j++) {
+
+            if (!tls_curve_allowed(s, pgroups[j], SSL_SECOP_CURVE_SUPPORTED))
+                continue;
+
+            curve_id = pgroups[j];
+            break;
+        }
     }
 
+    s->s3->group_id = curve_id;
+
+     if (((s->s3->group_id) == 0x024D) || ((s->s3->group_id) == 0x024E) || ((s->s3->group_id) == 0x024F) || ((s->s3->group_id) == 0x0239)
+   || ((s->s3->group_id) == 0x0244) || ((s->s3->group_id) == 0x0245) || ((s->s3->group_id) == 0x0246) || ((s->s3->group_id) == 0x0247) 
+   || ((s->s3->group_id) == 0x0248) || ((s->s3->group_id) == 0x0249) || ((s->s3->group_id) == 0x024A) || ((s->s3->group_id) == 0x024B) 
+   || ((s->s3->group_id) == 0x024C) || ((s->s3->group_id) == 0x2F50) || ((s->s3->group_id) == 0x2F51) || ((s->s3->group_id) == 0x2F52) 
+   || ((s->s3->group_id) == 0x2F53) || ((s->s3->group_id) == 0x2F54) || ((s->s3->group_id) == 0x2F55) || ((s->s3->group_id) == 0x2F56) 
+   || ((s->s3->group_id) == 0x2F57) || ((s->s3->group_id) == 0x2F58) || ((s->s3->group_id) == 0x2F59) || ((s->s3->group_id) == 0x2F4D) 
+   || ((s->s3->group_id) == 0x2F4E) || ((s->s3->group_id) == 0x2F4F)) {
+        if (!tls_construct_extensions_normal_serverhello(s, pkt, SSL_EXT_CLIENT_HELLO, NULL, 0)) {
+            /* SSLfatal() already called */
+            return 0;
+        }
+    } else {
+        if (!tls_construct_extensions(s, pkt, SSL_EXT_CLIENT_HELLO, NULL, 0)) {
+            /* SSLfatal() already called */
+            return 0;
+        }
+    }
     return 1;
 }
 
@@ -1474,17 +1512,35 @@ MSG_PROCESS_RETURN tls_process_server_hello(SSL *s, PACKET *pkt)
     }
 
     /* TLS extensions */
-    if (PACKET_remaining(pkt) == 0 && !hrr) {
-        PACKET_null_init(&extpkt);
-    } else if (!PACKET_as_length_prefixed_2(pkt, &extpkt)
-               || PACKET_remaining(pkt) != 0) {
-        SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PROCESS_SERVER_HELLO,
-                 SSL_R_BAD_LENGTH);
-        goto err;
+
+    if (((s->s3->group_id) == 0x024D) || ((s->s3->group_id) == 0x024E) || ((s->s3->group_id) == 0x024F) || ((s->s3->group_id) == 0x0239)
+   || ((s->s3->group_id) == 0x0244) || ((s->s3->group_id) == 0x0245) || ((s->s3->group_id) == 0x0246) || ((s->s3->group_id) == 0x0247) 
+   || ((s->s3->group_id) == 0x0248) || ((s->s3->group_id) == 0x0249) || ((s->s3->group_id) == 0x024A) || ((s->s3->group_id) == 0x024B) 
+   || ((s->s3->group_id) == 0x024C) || ((s->s3->group_id) == 0x2F50) || ((s->s3->group_id) == 0x2F51) || ((s->s3->group_id) == 0x2F52) 
+   || ((s->s3->group_id) == 0x2F53) || ((s->s3->group_id) == 0x2F54) || ((s->s3->group_id) == 0x2F55) || ((s->s3->group_id) == 0x2F56) 
+   || ((s->s3->group_id) == 0x2F57) || ((s->s3->group_id) == 0x2F58) || ((s->s3->group_id) == 0x2F59) || ((s->s3->group_id) == 0x2F4D) 
+   || ((s->s3->group_id) == 0x2F4E) || ((s->s3->group_id) == 0x2F4F)) {
+        if (PACKET_remaining(pkt) == 0 && !hrr) {
+            PACKET_null_init(&extpkt);
+        } else if (!PACKET_as_length_prefixed_4(pkt, &extpkt)
+                   || PACKET_remaining(pkt) != 0) {
+            SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PROCESS_SERVER_HELLO,
+                     SSL_R_BAD_LENGTH);
+            goto err;
+    }
+    } else {
+        if (PACKET_remaining(pkt) == 0 && !hrr) {
+            PACKET_null_init(&extpkt);
+        } else if (!PACKET_as_length_prefixed_2(pkt, &extpkt)
+                   || PACKET_remaining(pkt) != 0) {
+            SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PROCESS_SERVER_HELLO,
+                     SSL_R_BAD_LENGTH);
+            goto err;
+    }
     }
 
     if (!hrr) {
-        if (!tls_collect_extensions(s, &extpkt,
+        if (!tls_collect_extensions_serverhello_rlce(s, &extpkt,
                                     SSL_EXT_TLS1_2_SERVER_HELLO
                                     | SSL_EXT_TLS1_3_SERVER_HELLO,
                                     &extensions, NULL, 1)) {
@@ -1857,8 +1913,23 @@ MSG_PROCESS_RETURN tls_process_server_certificate(SSL *s, PACKET *pkt)
                      SSL_F_TLS_PROCESS_SERVER_CERTIFICATE,
                      SSL_R_CERT_LENGTH_MISMATCH);
             goto err;
+        } 
+      /*
+      if (!PACKET_get_net_3(pkt, &cert_len)) {
+            SSLfatal(s, SSL_AD_DECODE_ERROR,
+                     SSL_F_TLS_PROCESS_SERVER_CERTIFICATE,
+                     SSL_R_CERT_LENGTH_MISMATCH);
+            goto err;
         }
 
+
+        if (!PACKET_get_bytes(pkt, &certbytes, cert_len)) {
+            SSLfatal(s, SSL_AD_DECODE_ERROR,
+                     SSL_F_TLS_PROCESS_SERVER_CERTIFICATE,
+                     SSL_R_CERT_LENGTH_MISMATCH);
+            goto err;
+        }
+       */
         certstart = certbytes;
         x = d2i_X509(NULL, (const unsigned char **)&certbytes, cert_len);
         if (x == NULL) {
@@ -1903,6 +1974,10 @@ MSG_PROCESS_RETURN tls_process_server_certificate(SSL *s, PACKET *pkt)
             goto err;
         }
         x = NULL;
+        
+       /* if (((s->s3->group_id) == 0x024D) || ((s->s3->group_id) == 0x024E) || ((s->s3->group_id) == 0x024F)) {
+          break;
+        } */
     }
 
     i = ssl_verify_cert_chain(s, sk);
@@ -2685,7 +2760,7 @@ MSG_PROCESS_RETURN tls_process_new_session_ticket(SSL *s, PACKET *pkt)
             goto err;
         }
 
-        if (!tls_collect_extensions(s, &extpkt,
+        if (!tls_collect_extensions_serverhello_rlce(s, &extpkt,
                                     SSL_EXT_TLS1_3_NEW_SESSION_TICKET, &exts,
                                     NULL, 1)
                 || !tls_parse_all_extensions(s,
@@ -3697,14 +3772,29 @@ static MSG_PROCESS_RETURN tls_process_encrypted_extensions(SSL *s, PACKET *pkt)
     PACKET extensions;
     RAW_EXTENSION *rawexts = NULL;
 
-    if (!PACKET_as_length_prefixed_2(pkt, &extensions)
-            || PACKET_remaining(pkt) != 0) {
-        SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PROCESS_ENCRYPTED_EXTENSIONS,
-                 SSL_R_LENGTH_MISMATCH);
-        goto err;
+     if (((s->s3->group_id) == 0x024D) || ((s->s3->group_id) == 0x024E) || ((s->s3->group_id) == 0x024F) || ((s->s3->group_id) == 0x0239)
+   || ((s->s3->group_id) == 0x0244) || ((s->s3->group_id) == 0x0245) || ((s->s3->group_id) == 0x0246) || ((s->s3->group_id) == 0x0247) 
+   || ((s->s3->group_id) == 0x0248) || ((s->s3->group_id) == 0x0249) || ((s->s3->group_id) == 0x024A) || ((s->s3->group_id) == 0x024B) 
+   || ((s->s3->group_id) == 0x024C) || ((s->s3->group_id) == 0x2F50) || ((s->s3->group_id) == 0x2F51) || ((s->s3->group_id) == 0x2F52) 
+   || ((s->s3->group_id) == 0x2F53) || ((s->s3->group_id) == 0x2F54) || ((s->s3->group_id) == 0x2F55) || ((s->s3->group_id) == 0x2F56) 
+   || ((s->s3->group_id) == 0x2F57) || ((s->s3->group_id) == 0x2F58) || ((s->s3->group_id) == 0x2F59) || ((s->s3->group_id) == 0x2F4D) 
+   || ((s->s3->group_id) == 0x2F4E) || ((s->s3->group_id) == 0x2F4F)) {
+        if (!PACKET_as_length_prefixed_4(pkt, &extensions)
+                || PACKET_remaining(pkt) != 0) {
+            SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PROCESS_ENCRYPTED_EXTENSIONS,
+                     SSL_R_LENGTH_MISMATCH);
+            goto err;
+        }
+    } else {
+        if (!PACKET_as_length_prefixed_2(pkt, &extensions)
+                || PACKET_remaining(pkt) != 0) {
+            SSLfatal(s, SSL_AD_DECODE_ERROR, SSL_F_TLS_PROCESS_ENCRYPTED_EXTENSIONS,
+                     SSL_R_LENGTH_MISMATCH);
+            goto err;
+        }
     }
 
-    if (!tls_collect_extensions(s, &extensions,
+    if (!tls_collect_extensions_serverhello_rlce(s, &extensions,
                                 SSL_EXT_TLS1_3_ENCRYPTED_EXTENSIONS, &rawexts,
                                 NULL, 1)
             || !tls_parse_all_extensions(s, SSL_EXT_TLS1_3_ENCRYPTED_EXTENSIONS,

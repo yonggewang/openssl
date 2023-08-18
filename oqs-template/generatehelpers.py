@@ -24,6 +24,7 @@ def get_kem_nistlevel(alg, docsdir):
     if alg['family'] == 'CRYSTALS-Kyber': datasheetname = 'kyber'
     elif alg['family'] == 'SIDH': datasheetname = 'sike'
     elif alg['family'] == 'NTRU-Prime': datasheetname = 'ntruprime'
+    elif alg['family'] == 'Classic McEliece': datasheetname = 'classic_mceliece'
     else: datasheetname = alg['family'].lower()
     # load datasheet
     try:

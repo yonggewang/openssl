@@ -82,9 +82,11 @@ The following quantum-safe algorithms from liboqs are supported (assuming they h
 
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_START -->
 - **BIKE**: `bikel1`, `bikel3`, `bikel5`
+- **Classic McEliece**: `classicmceliece348864`, `classicmceliece348864f`, `classicmceliece460896`, `classicmceliece460896f`, `classicmceliece6688128`, `classicmceliece6688128f`, `classicmceliece6960119`, `classicmceliece6960119f`, `classicmceliece8192128`, `classicmceliece8192128f`
 - **CRYSTALS-Kyber**: `kyber512`, `kyber768`, `kyber1024`
 - **FrodoKEM**: `frodo640aes`, `frodo640shake`, `frodo976aes`, `frodo976shake`, `frodo1344aes`, `frodo1344shake`
 - **HQC**: `hqc128`, `hqc192`, `hqc256`†
+- **RLCE**: `rlcel1`, `rlcel3`, `rlcel5`
 <!--- OQS_TEMPLATE_FRAGMENT_LIST_KEXS_END -->
 
 If ``<KEX>`` is any of the algorithms listed above, the following hybrid algorithms are supported:

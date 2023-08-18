@@ -626,6 +626,43 @@ __owur static ossl_inline int PACKET_get_length_prefixed_3(PACKET *pkt,
     return 1;
 }
 
+__owur static ossl_inline int PACKET_get_length_prefixed_4(PACKET *pkt,
+                                                           PACKET *subpkt)
+{
+    unsigned long length;
+    const unsigned char *data;
+    PACKET tmp = *pkt;
+    if (!PACKET_get_net_4(&tmp, &length) ||
+        !PACKET_get_bytes(&tmp, &data, (size_t)length)) {
+        return 0;
+    }
+
+    *pkt = tmp;
+    subpkt->curr = data;
+    subpkt->remaining = length;
+
+    return 1;
+}
+
+__owur static ossl_inline int PACKET_as_length_prefixed_4(PACKET *pkt,
+                                                           PACKET *subpkt)
+{
+    unsigned long length;
+    const unsigned char *data;
+    PACKET tmp = *pkt;
+    if (!PACKET_get_net_4(&tmp, &length) ||
+        !PACKET_get_bytes(&tmp, &data, (size_t)length) ||
+        PACKET_remaining(&tmp) != 0) {
+        return 0;
+    }
+
+    *pkt = tmp;
+    subpkt->curr = data;
+    subpkt->remaining = length;
+
+    return 1;
+}
+
 /* Writeable packets */
 
 typedef struct wpacket_sub WPACKET_SUB;
